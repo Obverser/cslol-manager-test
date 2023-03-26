@@ -170,6 +170,13 @@ auto Process::MarkMemoryExecutable(void* address, std::size_t size) const -> voi
                                          VM_PROT_READ | VM_PROT_EXECUTE)) {
         lol_throw_msg("mach_vm_protect: {:#x}", (std::uint32_t)err);
     }
+
+    if (auto const err = mach_vm_msync((mach_port_t)(uintptr_t)handle_,
+                                       (mach_vm_address_t)address,
+                                       (mach_vm_size_t)size,
+                                       VM_SYNC_SYNCHRONOUS|VM_SYNC_INVALIDATE)) {
+        lol_throw_msg("mach_vm_msync: {:#x}", (std::uint32_t)err);
+    }
 }
 
 #endif
